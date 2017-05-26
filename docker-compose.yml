@@ -1,0 +1,55 @@
+version: '2'
+services:
+  web:
+    build: .
+    image: foo/ilias1
+    container_name: foo_ilias
+    environment:
+      - httppath=http://localhost
+      - iliaspath=ilias
+      - timezone=Europe/Berlin
+      - clientid=myilias
+      - iliasmasterpassword=test
+      - mysqlhost=db
+      - mysqluser=ilias
+      - mysqlpassword=test
+      - mysqldbname=ilias
+      - mysqlport=3306
+      - language=de
+      - initilias=yes
+      - initadminfirstname=foo
+      - initadminlastname=bar
+      - initadminemail=foo@localhost
+      - initfeedbackemail=foo@localhost
+    links:
+      - db
+    expose:
+      - "80"
+    ports:
+      - "40080:80"
+    volumes:
+     - /docker/storage/ilias/wwwdata:/var/www/html/data
+     - /docker/storage/ilias/data:/opt/iliasdata/
+      
+  db:
+    image: patsys/mariadb
+    container_name: sundatilias_mysql
+    environment:
+      - MYSQL_DATABASE=ilias
+      - MYSQL_USER=ilias
+      - MYSQL_PASSWORD=test
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_HOST=172.%.%.%
+      - MYSQL_ROOT_HOST=172.%.%.%
+    expose:
+      - "3306"
+    volumes:
+      -  /docker/storage/ilias/db:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - db
+    ports:
+      - "40081:80"
+
+
