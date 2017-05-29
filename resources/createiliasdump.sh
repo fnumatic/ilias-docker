@@ -4,24 +4,23 @@
 HOST=$mysqlhost
 PORT=$mysqlport
 DATABASE=$mysqldbname
-USER=root
+USER=$mysqluser
 PASSWORD=$mysqlpassword
 WWWPATH=/var/www/html
 WWWDATA=$WWWPATH"/data"
 DATA="/opt/iliasdata"
-TARGETZIP="/data/share/ilias.tar.gz"
+VERSIONFILE=/data/resources/iliasversion
+VERSION=$(cat $VERSIONFILE)
+DUMP=/opt/backup
+DBDUMP=/opt/dbdump
+TARGETZIP=$DUMP/ilias-$VERSION.tar.gz
+SQLFILE=$DBDUMP/ilias.sql
 
-DUMP="/data/resources/iliasdump"
-mkdir -p "$DUMP"
-rm -r "$DUMP"
-mkdir -p "$DUMP"
-cp -r "$WWWDATA" "$DUMP/wwwdata"
-cp $WWWPATH"/ilias.ini.php" "$DUMP/ilias.ini.php"
-cp -r "$DATA" "$DUMP/data"
-mysqldump --host $HOST --user="$USER" --password="$PASSWORD" --port=$PORT --databases $DATABASE --add-drop-database > "$DUMP/ilias.sql"
+mkdir -p $DUMP
+mkdir -p $DBDUMP
 
-#zip -r "$TARGETZIP" "$DUMP"
-cd $DUMP
-cd ..
-tar -czf "$TARGETZIP" iliasdump/
-rm -r "$DUMP"
+mysqldump --host $HOST --user=$USER --password=$PASSWORD --port=$PORT --databases $DATABASE --add-drop-database > $SQLFILE
+
+tar -czf $TARGETZIP $WWWDATA $DATA $VERSIONFILE $SQLFILE
+
+rm $SQLFILE

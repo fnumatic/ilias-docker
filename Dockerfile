@@ -44,7 +44,8 @@ RUN curl -L https://github.com/ILIAS-eLearning/ILIAS/archive/v$version.tar.gz -o
 WORKDIR /data
 COPY resources $RESPATH/
 
-RUN chmod +x /data/resources/entrypoint.sh
+RUN chmod +x /data/resources/entrypoint.sh \
+&& echo $version > /data/resources/iliasversion    
 
 
 ENV httppath="http://localhost" \

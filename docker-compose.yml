@@ -2,14 +2,15 @@ version: '2'
 services:
   web:
     build: .
-    image: foo/ilias1
-    container_name: foo_ilias
+    image: foo/iliasapp
+    container_name: foo_ilias_app
     environment:
       - httppath=http://localhost
       - iliaspath=ilias
       - timezone=Europe/Berlin
       - clientid=myilias
       - iliasmasterpassword=test
+      - dbtype=innodb
       - mysqlhost=db
       - mysqluser=ilias
       - mysqlpassword=test
@@ -30,23 +31,25 @@ services:
     volumes:
      - /docker/storage/ilias/wwwdata:/var/www/html/data
      - /docker/storage/ilias/data:/opt/iliasdata/
+     - /docker/storage/ilias/backup:/opt/backup/
+
       
   db:
-    image: patsys/mariadb
-    container_name: sundatilias_mysql
+    image: mariadb
+    container_name: foo_ilias_db
     environment:
       - MYSQL_DATABASE=ilias
       - MYSQL_USER=ilias
       - MYSQL_PASSWORD=test
       - MYSQL_ROOT_PASSWORD=test
-      - MYSQL_HOST=172.%.%.%
-      - MYSQL_ROOT_HOST=172.%.%.%
+      
     expose:
       - "3306"
     volumes:
       -  /docker/storage/ilias/db:/var/lib/mysql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: foo_ilias_phpadmin
     links:
       - db
     ports:

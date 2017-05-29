@@ -78,7 +78,7 @@ if [ "$initilias" = "yes" ]; then
          $RESPATH/restoreilias.sh
   do
   	chown -R $ug $i
-  	chmod 751 $i
+  	chmod 775 $i
   done 
 
 fi
